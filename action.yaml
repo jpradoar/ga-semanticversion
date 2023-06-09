@@ -1,5 +1,8 @@
 name: 'GenericSemanticVersion'
 description: 'Generate a semantic version'
+branding:
+  icon: 'code'
+  color: 'blue'
 inputs:
   COMMIT_MSG: 
     description: 'Message in commimt'
