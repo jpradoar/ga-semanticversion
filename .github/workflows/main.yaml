@@ -1,0 +1,52 @@
+name: Semantic-Version
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REPO_USER: 'jpradoar'
+  REPO_APP: 'mqtt-consumer'
+
+
+jobs:
+  Semantic-Version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v3        
+ 
+
+
+      - name: Get las version of local file
+        id: last_version_local_file
+        run: |
+          LastVersion=$(cat version-example.json |jq -r .version)
+          echo "LAST_VERSION=$LastVersion " >> "$GITHUB_OUTPUT"
+      
+      - name: Generate new version with local file
+        uses: jpradoar/ga-semanticversion@v1.0.0
+        with:
+          COMMIT_MSG:  ${{ github.event.head_commit.message }}
+          VERSION: ${{ steps.last_version_local_file.outputs.LAST_VERSION }}
+ 
+
+ 
+
+      - name: Show last version of docker-hub image
+        id: last_version_remote_file
+        run: |
+          LastVersion=$(curl -s "https://hub.docker.com/v2/repositories/${{ env.REPO_USER }}/${{ env.REPO_APP }}/tags/?page_size=1" | jq -r '.results[].name'|sort -M|grep -v latest)
+          echo "LAST_VERSION=$LastVersion " >> "$GITHUB_OUTPUT"
+
+      - name: Generate new version with semantic version
+        id: nversion
+        uses: jpradoar/ga-semanticversion@v1.0.0
+        with:
+          COMMIT_MSG:  ${{ github.event.head_commit.message }}
+          VERSION: ${{ steps.last_version_remote_file.outputs.LAST_VERSION }}
+
+      - name: Show new version
+        run: echo "New version ${{ steps.nversion.outputs.NEW_VERSION }}" 

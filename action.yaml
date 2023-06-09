@@ -1,0 +1,15 @@
+name: 'GenericSemanticVersion'
+description: 'Generate a semantic version'
+inputs:
+  COMMIT_MSG: 
+    description: 'Message in commimt'
+    required: true  
+  VERSION: 
+    description: 'Version or command to get version'
+    required: true               
+runs:
+  using: 'docker'
+  image: docker://jpradoar/ga-semanticversion
+  args:
+    - ${{ inputs.COMMIT_MSG }}
+    - ${{ inputs.VERSION }}
