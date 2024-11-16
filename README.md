@@ -16,7 +16,7 @@ It's based on the semantic versioning standard X.Y.Z  and conventional commits.
 <div align="center"><img src="icon.png" /></div>
 <br>
 
-- Semantic version will be created from particular text in the commit. (major:  minor:, patch:  and more).
+- Semantic version will be created from particular text in the commit. (major:  minor:, patch:, fix: and more...).
 - This action enable you to use your own way to obtain a tag or version.
 - You can use local files and parse it, or even parse a dockerhub remote tag.
 
@@ -30,7 +30,7 @@ It's based on the semantic versioning standard X.Y.Z  and conventional commits.
 ### Triggers 
 
 ```
-git commit -m "patch:  bla bla bla"
+git commit -m "fix:  bla bla bla"
                 |      |
                 |      |__ Subject
                 |_________ Trigger
@@ -42,39 +42,39 @@ git commit -m "patch:  bla bla bla"
 
 
 
-<br>
+<br><br><br>
 
 <div align="center">
   
 ### Description
 
-|type   | messajes and/or triggers                       |description   | 
-|---    |---                                             |---           |
-|breaking: |major:, breaking:, release:                  | When you make incompatible API changes or add big changes that can be broken or can be "incompatible" with old versions  |
-|update: |minor:, enhancement:, update:, small-feature:  |When create a new implementation, without breaking changes (...here you don't break anything)                             |
-|fix: |patch:, fix:, feat:                               |This is a patch or small fix, in general could be small bugs or features                                                  |
-|Tests: |test:                                           |Used to create new images. Using it, you are sure is only for testing some things (like vulnerability scans or similar)   |
-|Trash: |trash:                                          |Temporary use to create a new version that is assumed to be deleted in the future.                                        |
-|free: | my_name:                                        |Free string to use as you like or need                                                                                    | 
+|type       | messajes and/or triggers                      |description                                                                                                               | 
+|---        |---                                            |---                                                                                                                       |
+|breaking:  |major:, breaking:, release:                    | When you make incompatible API changes or add big changes that can be broken or can be "incompatible" with old versions  |
+|update:    |minor:, enhancement:, update:, small-feature:  |When create a new implementation, without breaking changes (...here you don't break anything)                             |
+|fix:       |patch:, fix:, feat:                            |This is a patch or small fix, in general could be small bugs or features                                                  |
+|tests:     |test:                                          |Used to create new images. Using it, you are sure is only for testing some things (like vulnerability scans or similar)   |
+|trash:     |trash:                                         |Temporary use to create a new version that is assumed to be deleted in the future.                                        |
+|free:      |my_name:                                       |Free string to use as you like or need  (use only first word)                                                             | 
 
 
 
-<br>
+<br><br>
 
 
 
 ### Examples
 
-| Command                         | Old version | Patron  | New Version (result)            | 
-|---                              |---          |---      |---                              |
-|commit -m "breaking: text here"  |1.0.0        |[+1].Y.Z |2.0.0                            |
-|commit -m "update: text here"    |1.0.0        |X.[+1].Z |1.1.0                            |
-|commit -m "fix: text here"       |1.0.0        |X.Y.[+1] |1.0.1                            |
-|commit -m "test: text here"      |1.0.0        |X.Y.Z-[string] |1.0.0-eps2p7o1             |
-|commit -m "trash: text here"     |1.0.0        |X.Y.Z_trash-[string] |1.0.1_trash-6djf7mk1 |
-|commit -m "my_name: text here"   |1.0.0        |X.Y.Z-[first-word] |1.0.0-my_name          |
+| Command                             | Old version | Patron                     | New version (result)| 
+|---                                  |---          |---                         |---                  |
+|git commit -m "breaking: text here"  |1.0.0        |[+1].Y.Z                    |2.0.0                |
+|git commit -m "update: text here"    |1.0.0        |X.[+1].Z                    |1.1.0                |
+|git commit -m "fix: text here"       |1.0.0        |X.Y.[+1]                    |1.0.1                |
+|git commit -m "test: text here"      |1.0.0        |X.Y.Z-[random-string]       |1.0.0-eps2p7o1       |
+|git commit -m "trash: text here"     |1.0.0        |X.Y.Z_trash-[random-string] |1.0.1_trash-6djf7mk1 |
+|git commit -m "my_name: text here"   |1.0.0        |X.Y.Z-[first-word]          |1.0.0-my_name        |
 
-<br>
+<br><br>
 
 
 ### Logic
