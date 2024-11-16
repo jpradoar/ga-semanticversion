@@ -12,11 +12,11 @@ base_version=$(echo $X.$Y.$Z)
 cusotm_version=$(echo $COMMIT_MSG|cut -d':' -f1)
 
 # Create new version using type (major,minor,patch,beta,none)
-if [[ "$COMMIT_MSG"  =~ ^(major:|breaking:|release:|big-feature:) ]]; then
+if [[ "$COMMIT_MSG"  =~ ^(major:|breaking:|release:) ]]; then
   NewVersion=$(($X+1)).0.0
 elif [[ "$COMMIT_MSG" =~ ^(minor:|enhancement:|update:|feature:) ]]; then
   NewVersion=$X.$(($Y+1)).0
-elif [[ "$COMMIT_MSG" =~ (fix:|patch:) ]]; then
+elif [[ "$COMMIT_MSG" =~ ^(patch:|fix:|feat:) ]]; then
   NewVersion=$X.$Y.$(($Z+1))
 elif [[ "$COMMIT_MSG" =~ ^test: ]]; then
   # Generate test version string
