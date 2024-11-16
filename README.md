@@ -10,18 +10,24 @@
 <br>
 
 This GitHub Action can be used to generate a semantic version. Usefull to create automatic tag/release or any other version. 
-It's based on the semantic versioning standard X.Y.Z  
-Ref: [https://semver.org/](https://semver.org/)
+It's based on the semantic versioning standard X.Y.Z  and conventional commits.
+
 <br>
 <div align="center"><img src="icon.png" /></div>
 <br>
-
 
 - Semantic version will be created from particular text in the commit. (major:  minor:, patch:  and more).
 - This action enable you to use your own way to obtain a tag or version.
 - You can use local files and parse it, or even parse a dockerhub remote tag.
 
+
+
+
+
+
 <br>
+
+### Triggers 
 
 ```
 git commit -m "patch:  bla bla bla"
@@ -30,7 +36,48 @@ git commit -m "patch:  bla bla bla"
                 |_________ Trigger
 ```
 
+
+
+
+
+
+
 <br>
+
+<div align="center">
+  
+### Description
+
+|type   | messajes and/or triggers                       |description   | 
+|---    |---                                             |---           |
+|breaking: |major:, breaking:, release:                  | When you make incompatible API changes or add big changes that can be broken or can be "incompatible" with old versions  |
+|update: |minor:, enhancement:, update:, small-feature:  |When create a new implementation, without breaking changes (...here you don't break anything)                             |
+|fix: |patch:, fix:, feat:                               |This is a patch or small fix, in general could be small bugs or features                                                  |
+|Tests: |test:                                           |Used to create new images. Using it, you are sure is only for testing some things (like vulnerability scans or similar)   |
+|Trash: |trash:                                          |Temporary use to create a new version that is assumed to be deleted in the future.                                        |
+|free: | my_name:                                        |Free string to use as you like or need                                                                                    | 
+
+
+
+<br>
+
+
+
+### Examples
+
+| Command                         | Old version | Patron  | New Version (result)            | 
+|---                              |---          |---      |---                              |
+|commit -m "breaking: text here"  |1.0.0        |[+1].Y.Z |2.0.0                            |
+|commit -m "update: text here"    |1.0.0        |X.[+1].Z |1.1.0                            |
+|commit -m "fix: text here"       |1.0.0        |X.Y.[+1] |1.0.1                            |
+|commit -m "test: text here"      |1.0.0        |X.Y.Z-[string] |1.0.0-eps2p7o1             |
+|commit -m "trash: text here"     |1.0.0        |X.Y.Z_trash-[string] |1.0.1_trash-6djf7mk1 |
+|commit -m "my_name: text here"   |1.0.0        |X.Y.Z-[first-word] |1.0.0-my_name          |
+
+<br>
+
+
+### Logic
 
 ```mermaid
 graph LR
@@ -45,7 +92,7 @@ graph LR
     E --> |alpine ...| J((1.0.0-alpine))
 
 ```
-
+</div>
 <br>
 
 ### Use example:
@@ -65,34 +112,9 @@ graph LR
 
 <br>
 
-<div align="center">
+
   
-### Description
 
-|messaje              | description                                                                  |
-|---                  |---                                                                           |
-| patch:              | this is a patch or smal fix"                                                 | 
-| minor:              | this is a minor implementation"                                              | 
-| major:              | this is when you make incompatible API changes"                              | 
-| test:               | this is only for make some test or a different version, add a random string" | 
-| FooBar bla bla bla  | without ":"  ...this add a the first word in your commit message"            | 
-
-
-<br>
-
-### Examples
-|Command                              | Old version | Patron                | New Version (result)  | 
-|---                                  |---          |---                    | ---                   |
-| commit -m "patch: text here"        | 1.0.0       | X.Y.[+1]              | 1.0.1                 | 
-| commit -m "minor: text here"        | 1.0.0       | X.[+1].Z              | 1.1.0                 | 
-| commit -m "major: text here"        | 1.0.0       | [+1].Y.Z              | 2.0.0                 | 
-| commit -m "test: text here"         | 1.0.0       | X.Y.Z-[string]        | 1.0.0-wbp9lays        | 
-| commit -m "alpine bla bla bla bla"  | 1.0.0       | X.Y.Z-[first-string]  | 1.0.0-alpine          | 
-  
-<i>(Example using version 1.0.0 as last old version) </i>
-  
-<br><br>
-</div>  
 
 ### Example-Action (with local json file)
 ```yaml
@@ -105,7 +127,6 @@ on:
 jobs:
   Semantic-Version:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v3        
@@ -135,8 +156,7 @@ on:
     branches: [ main ]
 
 env:
-  REPO_USER: 'jpradoar'
-  REPO_APP: 'mqtt-consumer'
+  REPO_APP: 'ga-semanticversion'
 
 jobs:
   Semantic-Version:
@@ -146,10 +166,10 @@ jobs:
       - name: Checkout del repositorio
         uses: actions/checkout@v3        
 
-      - name: Show last version of docker-hub image
+      - name: Get last version of docker-hub image
         id: last_version_remote_file
         run: |
-          LastVersion=$(curl -s "https://hub.docker.com/v2/repositories/${{ env.REPO_USER }}/${{ env.REPO_APP }}/tags/?page_size=1" | jq -r '.results[].name'|sort -M|grep -v latest)
+          LastVersion=$(curl -s "https://hub.docker.com/v2/repositories/jpradoar/${{ env.REPO_APP }}/tags/?page_size=2" | jq -r '.results[].name'|sort -M|grep -v latest|tail -1)
           echo "LAST_VERSION=$LastVersion " >> "$GITHUB_OUTPUT"
 
       - name: Generate new version with semantic version
@@ -172,3 +192,11 @@ The scripts and documentation in this project are released under the [MIT Licens
 
 ### Contributing and Support
 All kinds of contributions are welcome ❤️ Please feel free to [create GitHub issues,PR](https://github.com/jpradoar/ga-semanticversion) for any feature requests, bugs, or documentation problems.
+
+
+<br>
+
+### Refs
+
+ * [https://semver.org/](https://semver.org/)
+ * [https://www.conventionalcommits.org/](https://www.conventionalcommits.org/)
