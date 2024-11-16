@@ -1,13 +1,15 @@
 name: Semantic-Version
 on:
   push:
-    branches: [ main ]
+    branches: 
+     - main
   pull_request:
     branches: [ main ]
 
-env:
+env: 
   REPO_USER: 'jpradoar'
-  REPO_APP: 'mqtt-consumer'
+  REPO_APP: 'ga-semanticversion'
+  BUILD_CONTEXT: './'
 
 
 jobs:
@@ -17,36 +19,35 @@ jobs:
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v3        
- 
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: jpradoar
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Get las version of local file
-        id: last_version_local_file
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Show last version of docker-hub image
+        id: get_last_version
         run: |
-          LastVersion=$(cat version-example.json |jq -r .version)
+          LastVersion=$(curl -s "https://hub.docker.com/v2/repositories/${{ env.REPO_USER }}/${{ env.REPO_APP }}/tags/?page_size=2" | jq -r '.results[].name'|sort -M|grep -v latest|tail -1)
           echo "LAST_VERSION=$LastVersion " >> "$GITHUB_OUTPUT"
       
       - name: Generate new version with local file
-        uses: jpradoar/ga-semanticversion@v1.0.0
-        with:
-          COMMIT_MSG:  ${{ github.event.head_commit.message }}
-          VERSION: ${{ steps.last_version_local_file.outputs.LAST_VERSION }}
- 
-
- 
-
-      - name: Show last version of docker-hub image
-        id: last_version_remote_file
-        run: |
-          LastVersion=$(curl -s "https://hub.docker.com/v2/repositories/${{ env.REPO_USER }}/${{ env.REPO_APP }}/tags/?page_size=1" | jq -r '.results[].name'|sort -M|grep -v latest)
-          echo "LAST_VERSION=$LastVersion " >> "$GITHUB_OUTPUT"
-
-      - name: Generate new version with semantic version
         id: nversion
         uses: jpradoar/ga-semanticversion@v1.0.0
         with:
-          COMMIT_MSG:  ${{ github.event.head_commit.message }}
-          VERSION: ${{ steps.last_version_remote_file.outputs.LAST_VERSION }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          VERSION: ${{ steps.get_last_version.outputs.LAST_VERSION }}
 
       - name: Show new version
         run: echo "New version ${{ steps.nversion.outputs.NEW_VERSION }}" 
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: ${{ env.BUILD_CONTEXT }}
+          push: true
+          tags: jpradoar/${{ env.REPO_APP }}:${{ steps.nversion.outputs.NEW_VERSION }}
