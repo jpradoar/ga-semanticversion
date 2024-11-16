@@ -4,9 +4,9 @@ on:
     branches:
       - main
     paths:
-      - './Dockerfile'
+      - 'Dockerfile'
       - '.github/workflows/main.yaml'
-      - './entrypoint.sh'
+      - 'entrypoint.sh'
   pull_request:
     branches: [ main ]
 
