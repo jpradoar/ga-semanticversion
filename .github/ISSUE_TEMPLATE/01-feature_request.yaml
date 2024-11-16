@@ -10,7 +10,7 @@ body:
   - type: markdown
     attributes:
       value: >
-        * Thanks :heart: for taking the time to fill out this feature request. Please, first try to search to see if a similar issue or if [already exists](https://github.com/jpradoar/event-driven-architecture/issues?q=is%3Aopen+is%3Aissue) for
+        * Thanks :heart: for taking the time to fill out this feature request. Please, first try to search to see if a similar issue or if [already exists](https://github.com/jpradoar/ga-semanticversion/issues?q=is%3Aopen+is%3Aissue) for
         your feature.
         
         * We are open to accept any contribution from users or enthusiast. 
